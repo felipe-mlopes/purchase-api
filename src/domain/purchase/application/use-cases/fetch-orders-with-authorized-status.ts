@@ -1,4 +1,5 @@
 import { OrdersRepository } from '../repositories/orders-repository';
+import { EmployeesRepository } from '../repositories/employees-repository';
 
 import { Order, Status } from '../../enterprise/entities/order';
 import { Role } from '../../enterprise/entities/employee';
@@ -8,7 +9,9 @@ import { NotAllowedError } from 'src/core/errors/not-allowed-error';
 import { ResourceNotFoundError } from 'src/core/errors/resource-not-found-error';
 
 interface FetchOrdersWithAuthorizedStatusRequest {
+  employeeId: string;
   employeeRole: Role;
+  page: number;
 }
 
 type FetchOrdersWithAuthorizedStatusResponse = Either<
@@ -19,10 +22,15 @@ type FetchOrdersWithAuthorizedStatusResponse = Either<
 >;
 
 export class FetchOrdersWithAuthorizedStatus {
-  constructor(private ordersRepository: OrdersRepository) {}
+  constructor(
+    private ordersRepository: OrdersRepository,
+    private employeesRepository: EmployeesRepository,
+  ) {}
 
   async execute({
+    employeeId,
     employeeRole,
+    page,
   }: FetchOrdersWithAuthorizedStatusRequest): Promise<FetchOrdersWithAuthorizedStatusResponse> {
     if (employeeRole !== Role.AUTHORIZER || Role.PURCHASER) {
       return left(new NotAllowedError());
@@ -30,8 +38,15 @@ export class FetchOrdersWithAuthorizedStatus {
 
     const statusAuthorized = Status.AUTHORIZED;
 
-    const orders =
-      await this.ordersRepository.findManyByStatus(statusAuthorized);
+    const employee = await this.employeesRepository.findById(employeeId);
+
+    if (!employee) return left(new NotAllowedError());
+
+    const orders = await this.ordersRepository.findManyRecentByStatus(
+      employeeId,
+      statusAuthorized,
+      { page },
+    );
 
     if (!orders) return left(new ResourceNotFoundError());
 
