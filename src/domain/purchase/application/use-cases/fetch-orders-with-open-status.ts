@@ -24,7 +24,7 @@ export class FetchOrdersWithOpenStatus {
   async execute({
     employeeRole,
   }: FetchOrdersWithOpenStatusRequest): Promise<FetchOrdersWithOpenStatusResponse> {
-    if (employeeRole !== Role.AUTHORIZER) {
+    if (employeeRole !== Role.AUTHORIZER || Role.PURCHASER) {
       return left(new NotAllowedError());
     }
 
