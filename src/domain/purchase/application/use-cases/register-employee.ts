@@ -1,9 +1,9 @@
-import { Employee, Role } from '../../enterprise/entities/employee';
+import { Employee, Role } from '@/domain/purchase/enterprise/entities/employee';
 
 import { EmployeesRepository } from '../repositories/employees-repository';
-import { HashGenerator } from '../../cryptography/hash-generator';
+import { HashGenerator } from '@/domain/purchase/cryptography/hash-generator';
 
-import { Either } from 'src/core/either';
+import { Either, left, right } from '@/core/either';
 import { EmployeeAlreadyExistsError } from './errors/employee-already-exist-error';
 
 interface RegisterEmployeeUseCaseRequest {
@@ -32,11 +32,10 @@ export class RegisterEmployeeUseCase {
     email,
     password,
   }: RegisterEmployeeUseCaseRequest): Promise<RegisterEmployeeUseCaseResponse> {
-    const employeeSameWithEmail =
-      await this.employeesRepository.findByEmail(email);
+    const employeeSameWithEmail = await this.employeesRepository.findByEmail(email);
 
-    if (employeeSameWithEmail) {
-      return left(new EmployeeAlreadyExistError(email));
+    if (employeeSameWithEmail) { 
+      return left(new EmployeeAlreadyExistsError(email)) 
     }
 
     const hashPassword = await this.hashGenerator.hash(password);
@@ -45,7 +44,8 @@ export class RegisterEmployeeUseCase {
       name,
       role,
       email,
-      password: hashPassword,
+      isActive: true,
+      password: hashPassword
     });
 
     await this.employeesRepository.create(employee);

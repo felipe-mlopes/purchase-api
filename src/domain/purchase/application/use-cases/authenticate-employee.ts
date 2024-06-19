@@ -2,7 +2,7 @@ import { EmployeesRepository } from '../repositories/employees-repository';
 import { HashComparer } from '../../cryptography/hash-comparer';
 import { Encrypter } from '../../cryptography/encrypter';
 
-import { Either, left, right } from 'src/core/either';
+import { Either, left, right } from '@/core/either';
 import { WrongCredentialsError } from './errors/wrong-credentials-error';
 
 interface AuthenticateEmployeeUsecaseRequest {

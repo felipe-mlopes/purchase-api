@@ -1,4 +1,4 @@
-import { Employee } from '../../enterprise/entities/employee';
+import { Employee } from '@/domain/purchase/enterprise/entities/employee';
 
 export abstract class EmployeesRepository {
   abstract findById(id: string): Promise<Employee | null>;
