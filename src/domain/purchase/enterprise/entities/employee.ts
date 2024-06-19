@@ -1,5 +1,5 @@
-import { Entity } from 'src/core/entities/entity';
-import { UniqueEntityID } from 'src/core/entities/unique-entity-id';
+import { Entity } from "@/core/entities/entity";
+import { UniqueEntityID } from "@/core/entities/unique-entity-id";
 
 export enum Role {
   REQUESTER = 'REQUESTER',
@@ -7,7 +7,7 @@ export enum Role {
   PURCHASER = 'PURCHASER',
 }
 
-interface EmployeeProps {
+export interface EmployeeProps {
   name: string;
   role: Role;
   isActive: boolean;
