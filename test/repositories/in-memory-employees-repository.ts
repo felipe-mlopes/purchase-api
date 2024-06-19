@@ -1,8 +1,8 @@
-import { EmployeesRepository } from 'src/domain/purchase/application/repositories/employees-repository';
+import { EmployeesRepository } from '@/domain/purchase/application/repositories/employees-repository';
 import {
   Employee,
   Role,
-} from 'src/domain/purchase/enterprise/entities/employee';
+} from '@/domain/purchase/enterprise/entities/employee';
 
 export class InMemoryEmployeesRepository implements EmployeesRepository {
   public items: Employee[] = [];
@@ -24,7 +24,7 @@ export class InMemoryEmployeesRepository implements EmployeesRepository {
   }
 
   async findByRole(role: Role): Promise<Employee[] | null> {
-    const employee = await this.items.find((item) => item.role === role);
+    const employee = await this.items.filter((item) => item.role === role);
 
     if (!employee) return null;
 
@@ -34,9 +34,7 @@ export class InMemoryEmployeesRepository implements EmployeesRepository {
         role: item.role,
         isActive: item.isActive,
         email: item.email,
-        password: item.password,
-        createdAt: item.createdAt,
-        updatedAt: item.updatedAt,
+        password: item.password
       }),
     );
   }
