@@ -22,7 +22,7 @@ export class InMemoryOrdersRepository implements OrdersRepository {
     return orders;
   }
 
-  async findManyByStatus(status: Status): Promise<Order[] | null> {
+  async findManyRecentByStatus(status: Status): Promise<Order[] | null> {
     const orders = await this.items.filter((item) => item.status === status);
 
     if (!orders) return null;
