@@ -46,7 +46,7 @@ describe('Edit Order By Author', () => {
         expect(inMemoryOrdersRepository.items[0].description).toEqual(order.description)
     })
 
-    it('should not be able to edit order being an employee buyer', async () => {
+    it('should not be able to edit an order being an employee buyer', async () => {
         const employee = makeEmployee({
             role: Role.PURCHASER
         })
@@ -71,7 +71,7 @@ describe('Edit Order By Author', () => {
         expect(result.value).toBeInstanceOf(NotAllowedError)
     })
 
-    it('should not be able to edit without employee registration', async () => {
+    it('should not be able to edit an order without employee registration', async () => {
         const employeeId = new UniqueEntityID()
         const orderId = new UniqueEntityID()
 
