@@ -1,11 +1,11 @@
 import { EmployeesRepository } from '../repositories/employees-repository';
 import { OrdersRepository } from '../repositories/orders-repository';
 
-import { Order } from '../../enterprise/entities/order';
-import { Role } from '../../enterprise/entities/employee';
+import { Order } from '@/domain/purchase/enterprise/entities/order';
+import { Role } from '@/domain/purchase/enterprise/entities/employee';
 
-import { Either, left, right } from 'src/core/either';
-import { NotAllowedError } from 'src/core/errors/not-allowed-error';
+import { Either, left, right } from '@/core/either';
+import { NotAllowedError } from '@/core/errors/not-allowed-error';
 
 
 interface CreateOrderUseCaseRequest {
@@ -38,11 +38,15 @@ export class CreateOrderUseCase {
     link,
     costCenter,
   }: CreateOrderUseCaseRequest): Promise<CreateOrderUseCaseResponse> {
-    if (employeeRole !== Role.AUTHORIZER || Role.REQUESTER) {
+    if (employeeRole !== Role.AUTHORIZER && employeeRole !== Role.REQUESTER) {
       return left(new NotAllowedError());
     }
 
     const employee = await this.employeesRepository.findById(authorId);
+
+    if (!employee) {
+      return left(new NotAllowedError());
+    }
 
     const order = Order.create({
       authorId: employee.id,
