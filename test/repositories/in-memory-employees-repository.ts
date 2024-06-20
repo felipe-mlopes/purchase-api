@@ -8,7 +8,7 @@ export class InMemoryEmployeesRepository implements EmployeesRepository {
   public items: Employee[] = [];
 
   async findById(id: string): Promise<Employee | null> {
-    const employee = await this.items.find((item) => item.id.toString() === id);
+    const employee = this.items.find((item) => item.id.toString() === id);
 
     if (!employee) return null;
 
@@ -16,7 +16,7 @@ export class InMemoryEmployeesRepository implements EmployeesRepository {
   }
 
   async findByEmail(email: string): Promise<Employee | null> {
-    const employee = await this.items.find((item) => item.email === email);
+    const employee = this.items.find((item) => item.email === email);
 
     if (!employee) return null;
 
@@ -24,7 +24,7 @@ export class InMemoryEmployeesRepository implements EmployeesRepository {
   }
 
   async findByRole(role: Role): Promise<Employee[] | null> {
-    const employee = await this.items.filter((item) => item.role === role);
+    const employee = this.items.filter((item) => item.role === role);
 
     if (!employee) return null;
 
@@ -40,7 +40,7 @@ export class InMemoryEmployeesRepository implements EmployeesRepository {
   }
 
   async save(employee: Employee): Promise<void> {
-    const itemIndex = await this.items.findIndex(
+    const itemIndex = this.items.findIndex(
       (item) => item.id === employee.id,
     );
 
