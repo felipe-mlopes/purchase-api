@@ -1,9 +1,10 @@
-import { InMemoryEmployeesRepository } from "test/repositories/in-memory-employees-repository"
-import { InMemoryOrdersRepository } from "test/repositories/in-memory-orders-repository"
 import { CreateOrderUseCase } from "./create-order"
-import { makeOrder } from "test/factories/make-order"
+import { Role } from "@/domain/purchase/enterprise/entities/employee"
+
+import { InMemoryOrdersRepository } from "test/repositories/in-memory-orders-repository"
+import { InMemoryEmployeesRepository } from "test/repositories/in-memory-employees-repository"
 import { makeEmployee } from "test/factories/make-employee"
-import { Role } from "../../enterprise/entities/employee"
+
 import { NotAllowedError } from "@/core/errors/not-allowed-error"
 import { UniqueEntityID } from "@/core/entities/unique-entity-id"
 
