@@ -5,7 +5,7 @@ export class InMemoryOrdersRepository implements OrdersRepository {
   public items: Order[] = [];
 
   async findById(id: string): Promise<Order | null> {
-    const order = await this.items.find((item) => item.id.toString() === id);
+    const order = this.items.find((item) => item.id.toString() === id);
 
     if (!order) return null;
 
@@ -13,7 +13,7 @@ export class InMemoryOrdersRepository implements OrdersRepository {
   }
 
   async findManyByAuthor(authorId: string): Promise<Order[] | null> {
-    const orders = await this.items.filter(
+    const orders = this.items.filter(
       (item) => item.authorId.toString() === authorId,
     );
 
@@ -23,7 +23,7 @@ export class InMemoryOrdersRepository implements OrdersRepository {
   }
 
   async findManyRecentByStatus(status: Status): Promise<Order[] | null> {
-    const orders = await this.items.filter((item) => item.status === status);
+    const orders = this.items.filter((item) => item.status === status);
 
     if (!orders) return null;
 
@@ -31,7 +31,7 @@ export class InMemoryOrdersRepository implements OrdersRepository {
   }
 
   async save(order: Order): Promise<void> {
-    const itemIndex = await this.items.findIndex(
+    const itemIndex = this.items.findIndex(
       (item) => item.id === order.id,
     );
 
@@ -39,10 +39,14 @@ export class InMemoryOrdersRepository implements OrdersRepository {
   }
 
   async delete(order: Order): Promise<void> {
-    await this.items.filter((item) => item.id !== order.id);
+    const itemIndex = this.items.findIndex(
+      (item) => item.id === order.id,
+    );
+
+    this.items.splice(itemIndex, 1)
   }
 
   async create(order: Order): Promise<void> {
-    await this.items.push(order);
+    this.items.push(order);
   }
 }
