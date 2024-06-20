@@ -1,12 +1,12 @@
 import { OrdersRepository } from '../repositories/orders-repository';
 import { EmployeesRepository } from '../repositories/employees-repository';
 
-import { Order } from '../../enterprise/entities/order';
-import { Role } from '../../enterprise/entities/employee';
+import { Order } from '@/domain/purchase/enterprise/entities/order';
+import { Role } from '@/domain/purchase/enterprise/entities/employee';
 
-import { Either, left, right } from 'src/core/either';
-import { NotAllowedError } from 'src/core/errors/not-allowed-error';
-import { ResourceNotFoundError } from 'src/core/errors/resource-not-found-error';
+import { Either, left, right } from '@/core/either';
+import { NotAllowedError } from '@/core/errors/not-allowed-error';
+import { ResourceNotFoundError } from '@/core/errors/resource-not-found-error';
 
 interface EditOrderByAuthorUseCaseRequest {
   orderId: string;
@@ -40,7 +40,7 @@ export class EditOrderByAuthorUseCase {
     link,
     costCenter,
   }: EditOrderByAuthorUseCaseRequest): Promise<EditOrderByAuthorUseCaseResponse> {
-    if (employeeRole !== Role.AUTHORIZER || Role.REQUESTER) {
+    if (employeeRole !== Role.AUTHORIZER && employeeRole !== Role.REQUESTER) {
       return left(new NotAllowedError());
     }
 
@@ -49,6 +49,10 @@ export class EditOrderByAuthorUseCase {
     if (!employee) return left(new NotAllowedError());
 
     const order = await this.ordersRepository.findById(orderId);
+
+    if (order.authorId !== employee.id) {
+      return left(new NotAllowedError());
+    }
 
     if (!order) return left(new ResourceNotFoundError());
 
