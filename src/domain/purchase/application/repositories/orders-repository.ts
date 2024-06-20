@@ -1,5 +1,5 @@
 import { Order, Status } from '../../enterprise/entities/order';
-import { PaginationParams } from 'src/core/repositories/pagination-params';
+import { PaginationParams } from '@/core/repositories/pagination-params';
 
 export abstract class OrdersRepository {
   abstract findById(id: string): Promise<Order | null>;
