@@ -1,6 +1,6 @@
-import { Entity } from 'src/core/entities/entity';
-import { UniqueEntityID } from 'src/core/entities/unique-entity-id';
-import { Optional } from 'src/core/types/optional';
+import { Entity } from '@/core/entities/entity';
+import { UniqueEntityID } from '@/core/entities/unique-entity-id';
+import { Optional } from '@/core/types/optional';
 
 export enum Status {
   OPEN = 'OPEN',
@@ -8,7 +8,7 @@ export enum Status {
   DONE = 'DONE',
 }
 
-interface OrderProps {
+export interface OrderProps {
   authorId: UniqueEntityID;
   title: string;
   description: string;
