@@ -5,8 +5,8 @@ import { InMemoryEmployeesRepository } from "test/repositories/in-memory-employe
 import { InMemoryOrdersRepository } from "test/repositories/in-memory-orders-repository"
 import { makeOrder } from "test/factories/make-order"
 
-import { Role } from "../../enterprise/entities/employee"
-import { Status } from "../../enterprise/entities/order"
+import { Role } from '@/domain/purchase/enterprise/entities/employee';
+import { Status } from "@/domain/purchase/enterprise/entities/order";
 
 import { UniqueEntityID } from "@/core/entities/unique-entity-id"
 import { NotAllowedError } from "@/core/errors/not-allowed-error"
@@ -23,16 +23,11 @@ describe('Fetch Orders With Open Status', () => {
     })
 
     it('should be able to fecth orders with open status', async () => {
-        const employeeRequest = makeEmployee({
-            role: Role.REQUESTER
-        })
-
-        const employeePurchase = makeEmployee({
-            role: Role.PURCHASER
-        })
+        const employeeRequest = makeEmployee({ role: Role.REQUESTER })
+        const employeePurchaser = makeEmployee({ role: Role.PURCHASER })
 
         await inMemoryEmployeesRepository.create(employeeRequest)
-        await inMemoryEmployeesRepository.create(employeePurchase)
+        await inMemoryEmployeesRepository.create(employeePurchaser)
 
         const order01 = makeOrder({ authorId: employeeRequest.id, status: Status.OPEN, title: 'order-01' })
         const order02 = makeOrder({ authorId: employeeRequest.id, status: Status.AUTHORIZED })
@@ -43,7 +38,7 @@ describe('Fetch Orders With Open Status', () => {
         await inMemoryOrdersRepository.create(order03)
 
         const result = await sut.execute({
-            employeeId: employeePurchase.id.toString(),
+            employeeId: employeePurchaser.id.toString(),
             page: 1
         })
 
@@ -58,16 +53,11 @@ describe('Fetch Orders With Open Status', () => {
     })
 
     it('should be able to paginated orders ', async () => {
-        const employeeRequester = makeEmployee({
-            role: Role.REQUESTER
-        })
-
-        const employeePurchase = makeEmployee({
-            role: Role.PURCHASER
-        })
+        const employeeRequester = makeEmployee({ role: Role.REQUESTER })
+        const employeePurchaser = makeEmployee({ role: Role.PURCHASER })
 
         await inMemoryEmployeesRepository.create(employeeRequester)
-        await inMemoryEmployeesRepository.create(employeePurchase)
+        await inMemoryEmployeesRepository.create(employeePurchaser)
 
         for (let i = 1; i <= 12; i++) {
             await inMemoryOrdersRepository.create(
@@ -79,10 +69,11 @@ describe('Fetch Orders With Open Status', () => {
         }
 
         const result = await sut.execute({
-            employeeId: employeePurchase.id.toString(),
+            employeeId: employeePurchaser.id.toString(),
             page: 2
         })
 
+        expect(result.isRight()).toBe(true)
         if (result.isRight()) {
           expect(result.value?.orders).toHaveLength(2)
         }
@@ -101,9 +92,7 @@ describe('Fetch Orders With Open Status', () => {
     })
 
     it('should not be able to fetch orders not being purchasion or authorization employees', async () => {
-        const employee = makeEmployee({
-            role: Role.REQUESTER
-        })
+        const employee = makeEmployee({ role: Role.REQUESTER })
 
         await inMemoryEmployeesRepository.create(employee)
 
