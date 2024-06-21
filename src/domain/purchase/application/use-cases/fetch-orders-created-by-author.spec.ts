@@ -1,11 +1,12 @@
 import { FetchOrdersCreatedByAuthor } from "./fetch-orders-created-by-author"
 
-import { Role } from "@/domain/purchase/enterprise/entities/employee"
-
 import { InMemoryEmployeesRepository } from "test/repositories/in-memory-employees-repository"
 import { InMemoryOrdersRepository } from "test/repositories/in-memory-orders-repository"
 import { makeOrder } from "test/factories/make-order"
 import { makeEmployee } from "test/factories/make-employee"
+
+import { UniqueEntityID } from "@/core/entities/unique-entity-id"
+import { NotAllowedError } from "@/core/errors/not-allowed-error"
 
 describe('Fetch Orders Created By Author', () => {
     let inMemoryEmployeesRepository: InMemoryEmployeesRepository
@@ -15,7 +16,7 @@ describe('Fetch Orders Created By Author', () => {
     beforeEach(() => {
         inMemoryEmployeesRepository = new InMemoryEmployeesRepository()
         inMemoryOrdersRepository = new InMemoryOrdersRepository()
-        sut = new FetchOrdersCreatedByAuthor(inMemoryOrdersRepository)
+        sut = new FetchOrdersCreatedByAuthor(inMemoryOrdersRepository, inMemoryEmployeesRepository)
     })
 
     it('should be able to fetch orders created by author', async () => {
@@ -42,20 +43,22 @@ describe('Fetch Orders Created By Author', () => {
         })
 
         expect(result.isRight()).toBe(true)
-        expect(result.value?.orders).toHaveLength(2)
-        expect(result.value?.orders).toEqual(
-            expect.arrayContaining([
-              expect.objectContaining({
-                title: 'order-01'
-              }),
-              expect.objectContaining({
-                title: 'order-02'
-              }),
-            ]),
-        )
+        if (result.isRight()) {
+          expect(result.value?.orders).toHaveLength(2)
+          expect(result.value?.orders).toEqual(
+              expect.arrayContaining([
+                expect.objectContaining({
+                  title: 'order-01'
+                }),
+                expect.objectContaining({
+                  title: 'order-02'
+                }),
+              ]),
+          )
+        }
     })
 
-    it('should not be able to fetch paginated orders ', async () => {
+    it('should be able to paginated orders ', async () => {
         const employee = makeEmployee()
 
         await inMemoryEmployeesRepository.create(employee)
@@ -73,6 +76,20 @@ describe('Fetch Orders Created By Author', () => {
             page: 2
         })
 
-        expect(result.value?.orders).toHaveLength(2)
+        if (result.isRight()) {
+          expect(result.value?.orders).toHaveLength(2)
+        }
+    })
+
+    it('should not be able to fetch orders without employee registration', async () => {
+      const employeeId = new UniqueEntityID()
+
+      const result = await sut.execute({
+        authorId: employeeId.toString(),
+        page: 1
+      })
+
+      expect(result.isLeft()).toBe(true)
+      expect(result.value).toBeInstanceOf(NotAllowedError)
     })
 })
