@@ -1,9 +1,10 @@
 import { OrdersRepository } from '../repositories/orders-repository';
+import { EmployeesRepository } from '../repositories/employees-repository';
 
 import { Order } from '@/domain/purchase/enterprise/entities/order';
-import { Role } from '@/domain/purchase/enterprise/entities/employee';
 
-import { Either, right } from '@/core/either';
+import { Either, left, right } from '@/core/either';
+import { NotAllowedError } from '@/core/errors/not-allowed-error';
 
 interface FetchOrdersCreatedByAuthorRequest {
   authorId: string;
@@ -11,7 +12,7 @@ interface FetchOrdersCreatedByAuthorRequest {
 }
 
 type FetchOrdersCreatedByAuthorResponse = Either<
-  null,
+  NotAllowedError,
   {
     orders: Order[];
   }
@@ -20,12 +21,19 @@ type FetchOrdersCreatedByAuthorResponse = Either<
 export class FetchOrdersCreatedByAuthor {
   constructor(
     private ordersRepository: OrdersRepository,
+    private employeesRepository: EmployeesRepository,
   ) {}
 
   async execute({
     authorId,
     page
   }: FetchOrdersCreatedByAuthorRequest): Promise<FetchOrdersCreatedByAuthorResponse> {
+    const employee = await this.employeesRepository.findById(authorId);
+
+    if (!employee) {
+      return left(new NotAllowedError());
+    }
+
     const orders = await this.ordersRepository.findManyByAuthor(authorId, { page });
 
     return right({
