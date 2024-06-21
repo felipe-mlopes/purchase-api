@@ -27,12 +27,12 @@ describe('Fetch Orders With Authorized Status', () => {
             role: Role.REQUESTER
         })
 
-        const employeePurchase = makeEmployee({
+        const employeePurchaser = makeEmployee({
             role: Role.PURCHASER
         })
 
         await inMemoryEmployeesRepository.create(employeeRequester)
-        await inMemoryEmployeesRepository.create(employeePurchase)
+        await inMemoryEmployeesRepository.create(employeePurchaser)
 
         const order01 = makeOrder({
             authorId: employeeRequester.id,
@@ -49,7 +49,7 @@ describe('Fetch Orders With Authorized Status', () => {
         await inMemoryOrdersRepository.create(order02)
 
         const result = await sut.execute({
-            employeeId: employeePurchase.id.toString(),
+            employeeId: employeePurchaser.id.toString(),
             page: 1
         })
 
@@ -67,12 +67,12 @@ describe('Fetch Orders With Authorized Status', () => {
             role: Role.REQUESTER
         })
 
-        const employeePurchase = makeEmployee({
+        const employeePurchaser = makeEmployee({
             role: Role.PURCHASER
         })
 
         await inMemoryEmployeesRepository.create(employeeRequester)
-        await inMemoryEmployeesRepository.create(employeePurchase)
+        await inMemoryEmployeesRepository.create(employeePurchaser)
 
         for (let i = 1; i <= 12; i++) {
             await inMemoryOrdersRepository.create(
@@ -84,10 +84,11 @@ describe('Fetch Orders With Authorized Status', () => {
         }
 
         const result = await sut.execute({
-            employeeId: employeePurchase.id.toString(),
+            employeeId: employeePurchaser.id.toString(),
             page: 2
         })
 
+        expect(result.isRight()).toBe(true)
         if (result.isRight()) {
           expect(result.value?.orders).toHaveLength(2)
         }
