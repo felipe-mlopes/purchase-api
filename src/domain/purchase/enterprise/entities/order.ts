@@ -5,6 +5,7 @@ import { Optional } from '@/core/types/optional';
 export enum Status {
   OPEN = 'OPEN',
   AUTHORIZED = 'AUTHORIZED',
+  REJECTED = "REJECTED",
   DONE = 'DONE',
 }
 
@@ -16,6 +17,9 @@ export interface OrderProps {
   costCenter: string;
   status: Status;
   createdAt: Date;
+  authorizedAt?: Date | null;
+  rejectedAt?: Date | null;
+  completedAt?: Date | null;
   updatedAt?: Date | null;
 }
 
@@ -68,11 +72,37 @@ export class Order extends Entity<OrderProps> {
     if (Object.values(Status).includes(status)) {
       this.props.status = status;
       this.touch();
+
+      if (status === Status.AUTHORIZED) {
+        this.authorizedTouch();
+      }
+
+      if (status === Status.REJECTED) {
+        this.rejectedTouch();
+      }
+
+      if (status === Status.DONE) {
+        this.completedTouch();
+      }
+    } else {
+      console.error('Status invalid.');
     }
   }
 
   get createdAt() {
     return this.props.createdAt;
+  }
+
+  get authorizedAt() {
+    return this.props.authorizedAt
+  }
+
+  get rejectedAt() {
+    return this.props.rejectedAt
+  }
+
+  get completedAt() {
+    return this.props.completedAt
   }
 
   get updatedAt() {
@@ -81,6 +111,18 @@ export class Order extends Entity<OrderProps> {
 
   private touch() {
     this.props.updatedAt = new Date();
+  }
+
+  private authorizedTouch() {
+    this.props.authorizedAt = new Date()
+  }
+
+  private rejectedTouch() {
+    this.props.rejectedAt = new Date()
+  }
+
+  private completedTouch() {
+    this.props.completedAt = new Date()
   }
 
   static create(
