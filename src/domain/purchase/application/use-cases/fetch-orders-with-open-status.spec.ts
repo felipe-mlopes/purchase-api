@@ -91,7 +91,7 @@ describe('Fetch Orders With Open Status', () => {
         expect(result.value).toBeInstanceOf(NotAllowedError)
     })
 
-    it('should not be able to fetch orders not being purchasion or authorization employees', async () => {
+    it('should not be able to fetch orders not being purchaser or authorizer employees', async () => {
         const employee = makeEmployee({ role: Role.REQUESTER })
 
         await inMemoryEmployeesRepository.create(employee)
