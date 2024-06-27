@@ -1,4 +1,4 @@
-import { Order, Status } from '../../enterprise/entities/order';
+import { Order, Status } from '@/domain/purchase/enterprise/entities/order';
 import { PaginationParams } from '@/core/repositories/pagination-params';
 
 export abstract class OrdersRepository {
