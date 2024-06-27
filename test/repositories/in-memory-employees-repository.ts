@@ -31,10 +31,8 @@ export class InMemoryEmployeesRepository implements EmployeesRepository {
     return employee;
   }
 
-  async findByRole(role: Role): Promise<Employee[] | null> {
+  async findByRole(role: Role): Promise<Employee[]> {
     const employee = this.items.filter((item) => item.role === role);
-
-    if (!employee) return null;
 
     return employee.map((item) =>
       Employee.create({
