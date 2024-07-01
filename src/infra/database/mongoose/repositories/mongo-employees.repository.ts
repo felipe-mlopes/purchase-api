@@ -1,24 +1,23 @@
-import { Injectable } from "@nestjs/common";
+import { Inject, Injectable } from "@nestjs/common";
+import { Model } from "mongoose";
 
 import { EmployeesRepository } from "@/domain/purchase/application/repositories/employees-repository";
 import { Employee } from "@/domain/purchase/enterprise/entities/employee";
-import { FirestoreService } from "../firestone.service";
 
 @Injectable()
-export class FirestoreEmployeesRepository implements EmployeesRepository {
-    constructor(private firestoreService: FirestoreService) {}
-
-    firestone = this.firestoreService.getFirestoneInstance()
+export class MongoEmployeesRepository implements EmployeesRepository {
+    constructor(
+        @Inject('EMPLOYEE_MODEL')
+    private employeeModel: Model<Employee>,
+    ) {}
 
     async findById(id: string): Promise<Employee | null> {
-        const employeeColletion = this.firestone.collection('employee')
-        const employee = await employeeColletion.doc(id).get()
+        throw new Error("Method not implemented.");
+    
+    }
 
-        if(!employee) {
-            return null
-        }
-
-        
+    async findAll(): Promise<Employee[]> {
+        throw new Error("Method not implemented.");
     }
 
     async findByEmail(email: string): Promise<Employee | null> {
