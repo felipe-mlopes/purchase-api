@@ -1,16 +1,16 @@
-import { Injectable } from "@nestjs/common";
-
-import { FirestoreService } from "../firestone.service";
+import { Inject, Injectable } from "@nestjs/common";
+import { Model } from "mongoose";
 
 import { PaginationParams } from "@/core/repositories/pagination-params";
 import { OrdersRepository } from "@/domain/purchase/application/repositories/orders-repository"
 import { Order, Status } from "@/domain/purchase/enterprise/entities/order";
 
 @Injectable()
-export class FirestoneOrdersRepository implements OrdersRepository {
-    constructor(private firestoreService: FirestoreService) {}
-
-    firestone = this.firestoreService.getFirestoneInstance()
+export class MongoOrdersRepository implements OrdersRepository {
+    constructor(
+        @Inject('ORDER_MODEL')
+    private orderModel: Model<Order>,
+    ) {}
 
     findById(id: string): Promise<Order> {
         throw new Error("Method not implemented.");
