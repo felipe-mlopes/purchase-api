@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 
-import { Env, envSchema } from './env/env';
+import { envSchema } from './env/env';
 
 import { HttpModule } from './http/controllers/http.module';
 import { EnvModule } from './env/env.module';
@@ -10,6 +10,7 @@ import { EnvModule } from './env/env.module';
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
+      cache: true,
       validate: (env) => envSchema.parse(env),
     }), 
     HttpModule, 
