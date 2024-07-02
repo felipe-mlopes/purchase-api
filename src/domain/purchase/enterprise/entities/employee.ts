@@ -13,6 +13,7 @@ export interface EmployeeProps {
   isActive: boolean;
   email: string;
   password: string;
+  createdAt: Date
 }
 
 export class Employee extends Entity<EmployeeProps> {
@@ -52,12 +53,19 @@ export class Employee extends Entity<EmployeeProps> {
     return this.props.password;
   }
 
+  get createdAt() {
+    return this.props.createdAt
+  }
+
   set password(password: string) {
     this.props.password = password;
   }
 
   static create(props: EmployeeProps, id?: UniqueEntityID) {
-    const employee = new Employee(props, id);
+    const employee = new Employee({
+      createdAt: props.createdAt ?? new Date(),
+      ...props
+    }, id);
 
     return employee;
   }
