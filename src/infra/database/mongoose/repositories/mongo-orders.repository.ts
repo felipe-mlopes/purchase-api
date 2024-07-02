@@ -1,8 +1,7 @@
 import { Inject, Injectable } from "@nestjs/common";
 import { Model } from "mongoose";
 
-import { PaginationParams } from "@/core/repositories/pagination-params";
-import { OrdersRepository } from "@/domain/purchase/application/repositories/orders-repository"
+import { OrderParams, OrdersRepository } from "@/domain/purchase/application/repositories/orders-repository"
 import { Order, Status } from "@/domain/purchase/enterprise/entities/order";
 
 @Injectable()
@@ -12,22 +11,80 @@ export class MongoOrdersRepository implements OrdersRepository {
     private orderModel: Model<Order>,
     ) {}
 
-    findById(id: string): Promise<Order> {
-        throw new Error("Method not implemented.");
+    async findById(id: string): Promise<Order> {
+        return await this.orderModel.findById(id).exec()
     }
-    findManyByAuthor(authorId: string, params: PaginationParams): Promise<Order[]> {
-        throw new Error("Method not implemented.");
+    
+    async findManyOrders({ 
+        startDate, 
+        endDate, 
+        authorName, 
+        status, 
+        costCenter, 
+        page 
+    }: OrderParams): Promise<Order[]> {
+        const query: any = await this.orderModel.find()
+
+        if (startDate || endDate) {
+            query.where('created_at');
+
+            if (startDate) {
+                query.gte(startDate.getTime());
+              }
+        
+            if (endDate) {
+                query.lte(endDate.getTime());
+            }
+        }
+
+        if (authorName) {
+            query.where('author_name').in(authorName)
+        }
+
+        if (status) {
+            query.where('status').equals(status)
+        }
+
+        if (costCenter) {
+            query.where('cost_center').equals(costCenter)
+        }
+
+        const currentPage = page || 1
+        const limit = 10
+        const skip = (currentPage - 1) * limit
+
+        return query.skip(skip).limit(limit).exec()
     }
-    findManyRecentByStatus(status: Status, params: PaginationParams): Promise<Order[]> {
-        throw new Error("Method not implemented.");
+
+    async findManyByAuthor(authorId: string, page: number): Promise<Order[]> {
+        const currentPage = page || 1
+        const limit = 10
+        const skip = (currentPage - 1) * limit
+
+        return await this.orderModel.find({ authorId }).skip(skip).limit(limit).exec()
     }
-    save(order: Order): Promise<void> {
-        throw new Error("Method not implemented.");
+
+    async findManyRecentByStatus(status: Status, page: number): Promise<Order[]> {
+        const currentPage = page || 1
+        const limit = 10
+        const skip = (currentPage - 1) * limit
+
+        return await this.orderModel.find({ status }).skip(skip).limit(limit).exec()
     }
-    delete(order: Order): Promise<void> {
-        throw new Error("Method not implemented.");
+
+    async save(order: Order): Promise<void> {
+        const id = order.id.toString()
+
+        return await this.orderModel.findByIdAndUpdate(id, order).exec()
     }
-    create(order: Order): Promise<void> {
-        throw new Error("Method not implemented.");
+
+    async delete(order: Order): Promise<void> {
+        const id = order.id.toString()
+
+        return await this.orderModel.findByIdAndDelete(id).exec()
+    }
+
+    async create(order: Order): Promise<void> {
+        return await this.orderModel.create(order)
     }
 }
