@@ -11,6 +11,7 @@ export enum Status {
 
 export interface OrderProps {
   authorId: UniqueEntityID;
+  authorName: string;
   title: string;
   description: string;
   link?: string | null;
@@ -26,6 +27,14 @@ export interface OrderProps {
 export class Order extends Entity<OrderProps> {
   get authorId() {
     return this.props.authorId;
+  }
+
+  get authorName() {
+    return this.props.authorName;
+  }
+
+  set authorName(authorName: string) {
+    this.props.authorName = authorName
   }
 
   get title() {
