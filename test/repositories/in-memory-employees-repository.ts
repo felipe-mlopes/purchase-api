@@ -36,14 +36,33 @@ export class InMemoryEmployeesRepository implements EmployeesRepository {
     isActive,
     page
   }: EmployeeParams): Promise<Employee[]> {
-    const employees = this.items
-      .filter((item) => 
-        item.createdAt.getDate() >= startDate.getDate() &&
-        item.createdAt.getDate() <= endDate.getDate() &&
-        item.role === role &&
+    let employees = this.items
+
+    if (startDate) {
+      employees = employees.filter((item) => 
+        item.createdAt >= startDate
+      )
+    }
+
+    if (endDate) {
+      employees = employees.filter((item) => 
+        item.createdAt <= endDate
+      )
+    }
+
+    if (role) {
+      employees = employees.filter((item) => 
+        item.role === role
+      )
+    }
+
+    if (isActive !== undefined) {
+      employees = employees.filter((item) => 
         item.isActive === isActive
       )
-      .slice((page - 1) * 10, page * 10);
+    }
+
+    employees = employees.slice((page - 1) * 10, page * 10)
 
     return employees.map((item) =>
       Employee.create({
