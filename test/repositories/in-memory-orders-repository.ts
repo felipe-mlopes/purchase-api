@@ -1,6 +1,4 @@
-import { PaginationParams } from '@/core/repositories/pagination-params';
-
-import { OrdersRepository } from '@/domain/purchase/application/repositories/orders-repository';
+import { OrderParams, OrdersRepository } from '@/domain/purchase/application/repositories/orders-repository';
 import { Order, Status } from '@/domain/purchase/enterprise/entities/order';
 
 export class InMemoryOrdersRepository implements OrdersRepository {
@@ -14,7 +12,43 @@ export class InMemoryOrdersRepository implements OrdersRepository {
     return order;
   }
 
-  async findManyByAuthor(authorId: string, { page }: PaginationParams): Promise<Order[]> {
+  async findManyOrders({
+    startDate,
+    endDate,
+    authorName,
+    costCenter,
+    status,
+    page
+  }: OrderParams): Promise<Order[]> {
+     const orders = this.items
+      .filter(item => 
+        item.createdAt.getDate() >= startDate.getDate() &&
+        item.createdAt.getDate() <= endDate.getDate() &&
+        item.authorName === authorName &&
+        item.costCenter === costCenter &&
+        item.status === status
+      )
+      .slice((page - 1) * 10, page * 10)
+
+      return orders.map(item => 
+        Order.create({
+          authorId: item.authorId,
+          authorName: item.authorName,
+          title: item.title,
+          description: item.description,
+          costCenter: item.costCenter,
+          link: item.link,
+          status: item.status,
+          createdAt: item.createdAt,
+          updatedAt: item.updatedAt,
+          authorizedAt: item.authorizedAt,
+          rejectedAt: item.rejectedAt,
+          completedAt: item.completedAt,
+        })
+      )
+   }
+
+  async findManyByAuthor(authorId: string, page: number): Promise<Order[]> {
     const orders = this.items
       .filter((item) => item.authorId.toString() === authorId)
       .slice((page - 1) * 10, page * 10)
@@ -22,7 +56,7 @@ export class InMemoryOrdersRepository implements OrdersRepository {
     return orders;
   }
 
-  async findManyRecentByStatus(status: Status, { page }: PaginationParams): Promise<Order[]> {
+  async findManyRecentByStatus(status: Status, page: number): Promise<Order[]> {
     const orders = this.items
       .filter((item) => item.status === status)
       .slice((page - 1) * 10, page * 10)
