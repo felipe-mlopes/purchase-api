@@ -11,6 +11,7 @@ import { NotAllowedError } from '@/core/errors/not-allowed-error';
 interface CreateOrderUseCaseRequest {
   employeeRole: Role;
   authorId: string;
+  authorName: string;
   title: string;
   description: string;
   link?: string | null;
@@ -33,6 +34,7 @@ export class CreateOrderUseCase {
   async execute({
     employeeRole,
     authorId,
+    authorName,
     title,
     description,
     link,
@@ -50,6 +52,7 @@ export class CreateOrderUseCase {
 
     const order = Order.create({
       authorId: employee.id,
+      authorName,
       title,
       description,
       link,
