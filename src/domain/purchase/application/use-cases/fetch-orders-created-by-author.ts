@@ -34,7 +34,7 @@ export class FetchOrdersCreatedByAuthor {
       return left(new NotAllowedError());
     }
 
-    const orders = await this.ordersRepository.findManyByAuthor(authorId, { page });
+    const orders = await this.ordersRepository.findManyByAuthor(authorId, page);
 
     return right({
       orders,

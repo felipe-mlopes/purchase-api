@@ -43,7 +43,7 @@ export class FetchOrdersWithRejectedStatus {
 
     const orders = await this.ordersRepository.findManyRecentByStatus(
       statusRejected,
-      { page },
+      page,
     );
 
     return right({

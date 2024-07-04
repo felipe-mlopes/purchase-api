@@ -43,7 +43,7 @@ export class FetchOrderWithDoneUseCase {
 
     const orders = await this.ordersRepository.findManyRecentByStatus(
       statusDone,
-      { page },
+      page,
     );
 
     return right({

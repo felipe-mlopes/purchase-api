@@ -43,7 +43,7 @@ export class FetchOrdersWithOpenStatus {
 
     const orders = await this.ordersRepository.findManyRecentByStatus(
       statusOpen,
-      { page }
+      page
     )
 
     return right({

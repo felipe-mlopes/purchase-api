@@ -43,7 +43,7 @@ export class FetchOrdersWithAuthorizedStatus {
 
     const orders = await this.ordersRepository.findManyRecentByStatus(
       statusAuthorized,
-      { page },
+      page,
     );
 
     return right({
