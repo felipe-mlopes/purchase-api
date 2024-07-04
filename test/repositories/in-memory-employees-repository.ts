@@ -1,6 +1,4 @@
-import { PaginationParams } from '@/core/repositories/pagination-params';
-
-import { EmployeesRepository } from '@/domain/purchase/application/repositories/employees-repository';
+import { EmployeeParams, EmployeesRepository } from '@/domain/purchase/application/repositories/employees-repository';
 import {
   Employee,
   Role,
@@ -9,7 +7,7 @@ import {
 export class InMemoryEmployeesRepository implements EmployeesRepository {
   public items: Employee[] = [];
 
-  async findAll({ page }: PaginationParams): Promise<Employee[]> {
+  async findAll(page: number): Promise<Employee[]> {
     const employees = this.items.slice((page - 1) * 10, page * 10)
     
     return employees
@@ -31,16 +29,30 @@ export class InMemoryEmployeesRepository implements EmployeesRepository {
     return employee;
   }
 
-  async findByRole(role: Role): Promise<Employee[]> {
-    const employee = this.items.filter((item) => item.role === role);
+  async findManyEmployees({
+    startDate,
+    endDate,
+    role,
+    isActive,
+    page
+  }: EmployeeParams): Promise<Employee[]> {
+    const employees = this.items
+      .filter((item) => 
+        item.createdAt.getDate() >= startDate.getDate() &&
+        item.createdAt.getDate() <= endDate.getDate() &&
+        item.role === role &&
+        item.isActive === isActive
+      )
+      .slice((page - 1) * 10, page * 10);
 
-    return employee.map((item) =>
+    return employees.map((item) =>
       Employee.create({
         name: item.name,
         role: item.role,
         isActive: item.isActive,
         email: item.email,
-        password: item.password
+        password: item.password,
+        createdAt: item.createdAt
       }),
     );
   }
