@@ -20,15 +20,39 @@ export class InMemoryOrdersRepository implements OrdersRepository {
     status,
     page
   }: OrderParams): Promise<Order[]> {
-     const orders = this.items
-      .filter(item => 
-        item.createdAt.getDate() >= startDate.getDate() &&
-        item.createdAt.getDate() <= endDate.getDate() &&
-        item.authorName === authorName &&
-        item.costCenter === costCenter &&
+    let orders = this.items
+
+    if (startDate) {
+      orders = orders.filter((item) => 
+        item.createdAt >= startDate
+      )
+    }
+
+    if (endDate) {
+      orders = orders.filter((item) => 
+        item.createdAt <= endDate
+      )
+    }
+
+    if (authorName) {
+      orders = orders.filter((item) => 
+        item.authorName === authorName
+      )
+    }
+
+    if (costCenter) {
+      orders = orders.filter((item) => 
+        item.costCenter === costCenter
+      )
+    }
+
+    if (status) {
+      orders = orders.filter((item) => 
         item.status === status
       )
-      .slice((page - 1) * 10, page * 10)
+    }
+
+    orders = orders.slice((page - 1) * 10, page * 10)
 
       return orders.map(item => 
         Order.create({
