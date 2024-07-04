@@ -1,5 +1,6 @@
 import { Entity } from "@/core/entities/entity";
 import { UniqueEntityID } from "@/core/entities/unique-entity-id";
+import { Optional } from "@/core/types/optional";
 
 export enum Role {
   REQUESTER = 'REQUESTER',
@@ -61,7 +62,7 @@ export class Employee extends Entity<EmployeeProps> {
     this.props.password = password;
   }
 
-  static create(props: EmployeeProps, id?: UniqueEntityID) {
+  static create(props: Optional<EmployeeProps, 'createdAt'>, id?: UniqueEntityID) {
     const employee = new Employee({
       createdAt: props.createdAt ?? new Date(),
       ...props
