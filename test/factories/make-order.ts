@@ -10,6 +10,7 @@ export function makeOrder(
         {
             title: faker.lorem.word(),
             authorId: new UniqueEntityID(),
+            authorName: faker.person.fullName(),
             costCenter: 'Maintenance',
             description: faker.lorem.text(),
             ...override
