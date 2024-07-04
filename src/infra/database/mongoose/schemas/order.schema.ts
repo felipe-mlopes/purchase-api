@@ -8,8 +8,7 @@ enum Status {
 }
 
 export const OrderSchema = new mongoose.Schema({
-    author_id: { type: String, required: true },
-    author_name: { type: String, required: true },
+    author_id: { type: mongoose.Schema.Types.ObjectId, ref: 'EmployeeSchema', required: true },
     title: { type: String, required: true },
     description: { type: String, required: true },
     link: { type: String },
