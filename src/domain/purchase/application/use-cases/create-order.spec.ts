@@ -28,6 +28,7 @@ describe('Create Order', () => {
         
         const result = await sut.execute({
             authorId: employee.id.toString(),
+            authorName: employee.name,
             title: 'order-01',
             costCenter: 'Maintenance',
             description: 'Maintenance material',
@@ -50,6 +51,7 @@ describe('Create Order', () => {
         
         const result = await sut.execute({
             authorId: employee.id.toString(),
+            authorName: employee.name,
             title: 'order-01',
             costCenter: 'Maintenance',
             description: 'Maintenance material',
@@ -66,6 +68,7 @@ describe('Create Order', () => {
 
         const result = await sut.execute({
             authorId: employeeId.toString(),
+            authorName: 'john doe',
             title: 'order-01',
             costCenter: 'Maintenance',
             description: 'Maintenance material',
